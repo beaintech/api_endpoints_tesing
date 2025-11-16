@@ -1,31 +1,50 @@
 # Pipedrive Local Playground (FastAPI)
 
-This is a local sandbox for testing Pipedrive OAuth callback and mock data exchange.
+A fully local sandbox for simulating Pipedrive API calls using mocked data. This playground is designed for demonstrating how Pipedrive → Reonic integrations work without requiring any real credentials.
 
-## Features
-- `/callback` — Handles Pipedrive OAuth redirect and displays received code.
-- `/mock/pipedrive` — Returns mocked Pipedrive deals.
-- `/mock/saas` — Returns mocked SaaS project data.
+---
+
+## Installation
+
+pip install fastapi "uvicorn[standard]" python-dotenv
+
+---
 
 ## Run Locally
-```bash
-pip install fastapi "uvicorn[standard]"
 
 uvicorn main:app --reload --port 8000
-Test Endpoints
+
+Server starts at:
+
+http://localhost:8000
+
+---
+
+## Test Endpoints
+
+OAuth Callback Test:
 http://localhost:8000/callback?code=test
 
+Mock Data Endpoints:
 http://localhost:8000/mock/pipedrive
+http://localhost:8000/mock/saas
 
-http://localhost:8000/mock/saas# api_endpoints_tesing
-
+Pipedrive Mock Endpoints:
 http://localhost:8000/get_leads
 
+Swagger UI:
 http://localhost:8000/docs
 
-http://localhost:8000/create_lead
+---
 
-http://localhost:8000/sync_leads
+## POST Examples
+
+### Create a Lead (POST /create_lead)
+
+Go to Swagger UI:
+http://localhost:8000/docs
+
+Open POST /create_lead → “Try it out” → paste:
 
 {
   "title": "Lead 158",
@@ -39,3 +58,21 @@ http://localhost:8000/sync_leads
   "visible_to": "1",
   "was_seen": true
 }
+
+---
+
+## Sync Leads (Pipedrive → Reonic)
+
+Trigger the sync:
+http://localhost:8000/sync_leads
+
+This endpoint does NOT require a request body.
+
+---
+
+## Notes
+
+• All responses are mocked – no real requests are sent to Pipedrive.  
+• URL structure and payload format match real Pipedrive API behavior.  
+• Safe for demos, onboarding, and planning integrations.  
+
