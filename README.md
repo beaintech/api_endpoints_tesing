@@ -42,8 +42,10 @@ POST   /create_lead
 PATCH  /update_lead/{lead_id}
 DELETE /delete_lead/{lead_id}
 POST   /sync_leads
+POST   /sync_reonic_to_pipedrive
 
 POST   /add_product
+POST   /sync_reonic_products
 ```
 
 ### Swagger UI
@@ -130,6 +132,22 @@ Trigger the sync:
 http://localhost:8000/sync_leads
 
 This endpoint does **not** require a request body.
+
+## Sync Projects (Reonic → Pipedrive)
+
+Trigger the reverse sync:
+
+http://localhost:8000/sync_reonic_to_pipedrive
+
+This fetches mocked Reonic projects, transforms them, and shows the POST payloads that would be sent to `/leads`.
+
+## Sync Products (Reonic → Pipedrive)
+
+Trigger the product sync:
+
+http://localhost:8000/sync_reonic_products
+
+It loads a mocked catalog from Reonic, converts them to Pipedrive product JSON, and returns the mocked POST bodies.
 
 ---
 
