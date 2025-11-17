@@ -1,18 +1,23 @@
 # Pipedrive Local Playground (FastAPI)
 
-A fully local sandbox for simulating Pipedrive API calls using mocked data. This playground is designed for demonstrating how Pipedrive → Reonic integrations work without requiring any real credentials.
+A fully local sandbox for simulating Pipedrive API calls using mocked data.  
+This playground is designed for demonstrating how Pipedrive → Reonic integrations work **without requiring real credentials**.
 
 ---
 
 ## Installation
 
+```
 pip install fastapi "uvicorn[standard]" python-dotenv
+```
 
 ---
 
 ## Run Locally
 
+```
 uvicorn main:app --reload --port 8000
+```
 
 Server starts at:
 
@@ -22,17 +27,24 @@ http://localhost:8000
 
 ## Test Endpoints
 
-OAuth Callback Test:
+### OAuth Callback Test
 http://localhost:8000/callback?code=test
 
-Mock Data Endpoints:
-http://localhost:8000/mock/pipedrive
+### Mock Data Endpoints
+http://localhost:8000/mock/pipedrive  
 http://localhost:8000/mock/saas
 
-Pipedrive Mock Endpoints:
-http://localhost:8000/get_leads
+### Pipedrive Mock Endpoints
+```
+GET    /get_leads
+GET    /get_lead/{lead_id}
+POST   /create_lead
+PATCH  /update_lead/{lead_id}
+DELETE /delete_lead/{lead_id}
+POST   /sync_leads
+```
 
-Swagger UI:
+### Swagger UI
 http://localhost:8000/docs
 
 ---
@@ -41,11 +53,12 @@ http://localhost:8000/docs
 
 ### Create a Lead (POST /create_lead)
 
-Go to Swagger UI:
+Open Swagger UI:  
 http://localhost:8000/docs
 
-Open POST /create_lead → “Try it out” → paste:
+POST → `/create_lead` → “Try it out” → paste:
 
+```
 {
   "title": "Lead 158",
   "amount": 3000,
@@ -58,21 +71,69 @@ Open POST /create_lead → “Try it out” → paste:
   "visible_to": "1",
   "was_seen": true
 }
+```
+
+---
+
+## Update a Lead (PATCH /update_lead/{lead_id})
+
+Example URL:
+```
+http://localhost:8000/update_lead/101
+```
+
+Example body:
+```
+{
+  "title": "Updated Lead Title",
+  "amount": 5000,
+  "currency": "EUR"
+}
+```
+
+All fields are optional.
+
+---
+
+## Delete a Lead (DELETE /delete_lead/{lead_id})
+
+Example:
+```
+http://localhost:8000/delete_lead/101
+```
+
+Returns:
+```
+{
+  "success": true,
+  "data": { "id": 101, "deleted": true }
+}
+```
+
+---
+
+## Fetch a Single Lead (GET /get_lead/{lead_id})
+
+Example:
+```
+http://localhost:8000/get_lead/101
+```
 
 ---
 
 ## Sync Leads (Pipedrive → Reonic)
 
 Trigger the sync:
+
 http://localhost:8000/sync_leads
 
-This endpoint does NOT require a request body.
+This endpoint does **not** require a request body.
 
 ---
 
 ## Notes
 
-• All responses are mocked – no real requests are sent to Pipedrive.  
-• URL structure and payload format match real Pipedrive API behavior.  
-• Safe for demos, onboarding, and planning integrations.  
-
+• All responses are fully mocked – no real requests are sent to Pipedrive.  
+• URL structure and JSON payloads match real Pipedrive API behavior.  
+• Safe for demos, onboarding, teaching API flows, and integration planning.  
+• Can be used to prototype Pipedrive → Reonic sync pipelines before building the real one.
