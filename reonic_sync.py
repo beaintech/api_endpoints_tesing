@@ -8,8 +8,8 @@ router = APIRouter()
 
 # Basic config for Pipedrive & Reonic
 PIPEDRIVE_API_TOKEN = os.getenv("PIPEDRIVE_API_TOKEN", "YOUR_API_TOKEN_HERE")
-PIPEDRIVE_COMPANY_DOMAIN = os.getenv("PIPEDRIVE_COMPANY_DOMAIN", "yourcompany")  
-REONIC_API_BASE = os.getenv("REONIC_API_BASE", "http://localhost:8000") 
+PIPEDRIVE_COMPANY_DOMAIN = os.getenv("PIPEDRIVE_COMPANY_DOMAIN", "yourcompany")
+REONIC_API_BASE = os.getenv("REONIC_API_BASE", "http://localhost:8000")
 
 PIPEDRIVE_BASE_URL = f"https://{PIPEDRIVE_COMPANY_DOMAIN}.pipedrive.com/v1"
 
@@ -63,22 +63,20 @@ async def reonic_push_status_to_pipedrive(body: ReonicDealStatusUpdate):
     url = f"{PIPEDRIVE_BASE_URL}/deals/{body.deal_id}"
     params = {"api_token": PIPEDRIVE_API_TOKEN}
 
-    value_block = None
-    if body.value_amount is not None and body.value_currency is not None:
-        value_block = {
-            "amount": body.value_amount,
-            "currency": body.value_currency,
-        }
-
     payload = {
         "stage_id": body.stage_id,
         "status": body.status,
         "probability": body.probability,
-        "value": value_block,
         "expected_close_date": body.expected_close_date,
         "reonic_technical_status": body.technical_status,
         "reonic_project_id": body.reonic_project_id,
     }
+
+    if body.value_amount is not None:
+        payload["value"] = int(body.value_amount)
+    if body.value_currency is not None:
+        payload["currency"] = body.value_currency
+
     payload = {k: v for k, v in payload.items() if v is not None}
 
     class MockResponse:
@@ -162,15 +160,16 @@ async def reonic_push_project_update(body: ReonicProjectUpdate):
     deal_payload = {
         "stage_id": body.stage_id,
         "expected_close_date": body.expected_go_live,
-        "value": (
-            {"amount": body.value_amount, "currency": body.value_currency}
-            if body.value_amount is not None and body.value_currency is not None
-            else None
-        ),
         "owner_id": body.owner_id,
         "reonic_technical_status": body.technical_status,
         "reonic_project_id": body.reonic_project_id,
     }
+
+    if body.value_amount is not None:
+        deal_payload["value"] = int(body.value_amount)
+    if body.value_currency is not None:
+        deal_payload["currency"] = body.value_currency
+
     deal_payload = {k: v for k, v in deal_payload.items() if v is not None}
 
     # Activity payload
